@@ -1,0 +1,13 @@
+
+rich
+typer
+questionary
+psutil
+pywin32
+jinja2
+
+
+pytest
+pytest-cov
+ruff
+mypy
