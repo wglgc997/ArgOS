@@ -68,7 +68,7 @@ class PowerShellRunner:
         if executable:
             self.executable = executable
         else:
-            self.executable = self.detect_executable()
+            self.executable = self._detect_executable()
 
     @staticmethod
     def _detect_executable() -> str:
@@ -112,11 +112,11 @@ class PowerShellRunner:
             [
                 self.executable,
                 "-NoLogo",
-                "_NoProfile",
+                "-NoProfile",
                 "-NonInteractive",
-                "_ExecutionPolicy",
+                "-ExecutionPolicy",
                 "Bypass",
-                "_Command",
+                "-Command",
                 command,
             ],
             capture_output=True,
@@ -143,7 +143,7 @@ class PowerShellRunner:
     def run_json(
             self,
             command: str,
-    ) -> dict[str, Any] | list[Any]:
+    ) -> dict[str, Any] | list[Any] | str | int | bool | None:
         """
         Execute a command and parse JSON output.
 
@@ -159,15 +159,24 @@ class PowerShellRunner:
         """
 
         json_command = (
-            f"{command} | ConvertTo-Json -Depth 10 -Compress"
+            f"&{{ {command} }} | "
+            "ConvertTo-Json -Depth 10 -Compress"
         )
 
         result = self.run(json_command)
 
         if not result.stdout:
-            return {}
+            return None
 
-        return json.loads(result.stdout)
+        try:
+            return json.loads(result.stdout)
+        except json.JSONDecodeError as error:
+            raise PowerShellError(
+                "PowerShell returned invalid JSON.\n"
+                f"Command: {command}\n"
+                f"Output: {result.stdout}"
+            ) from error
+
 
     def run_line(
             self,
