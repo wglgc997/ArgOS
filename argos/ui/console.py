@@ -11,7 +11,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 
-from ui.theme import SENTINEL_THEME
+from argos.ui.theme import SENTINEL_THEME
 
 console = Console(
     theme=SENTINEL_THEME,

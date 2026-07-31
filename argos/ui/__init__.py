@@ -2,7 +2,7 @@
 User interface components for ArgOS.
 """
 
-from ui.console import (
+from argos.ui.console import (
     clear_console,
     console,
     print_banner,

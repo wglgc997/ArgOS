@@ -1,7 +1,7 @@
 from pprint import pprint
 
-from ArgOS_cli.core.powershell_commands import GET_OPERATING_SYSTEM
-from ArgOS_cli.core.powershell import PowerShellError, PowerShellNotFoundError, PowerShellRunner
+from argos.core.powershell_commands import GET_OPERATING_SYSTEM
+from argos.core.powershell import PowerShellError, PowerShellNotFoundError, PowerShellRunner
 
 # def main() -> None:
 #     """Testing here the PS integration"""
