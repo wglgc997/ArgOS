@@ -89,3 +89,44 @@ GET_BITLOCKER = (
     "Select-Object MountPoint, VolumeStatus, "
     "ProtectionStatus, EncryptionMethod, EncryptionPercentage"
 )
+
+GET_SYSTEM_INFORMATION = """
+$os = Get-CimInstance Win32_OperatingSystem
+$computer = Get-CimInstance Win32_ComputerSystem
+$cpu = Get-CimInstance Win32_Processor
+$bios = Get-CimInstance Win32_BIOS
+$disks = Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"
+
+# Build a structured object with required sys info
+
+# Custom object with named fields
+[PSCustomObject]@{
+    Computer = $computer.Name
+    WindowsVersion = $os.Caption
+    WindowsBuild = $os.BuildNumber
+    Architecture = $os.OSArchitecture
+    CPU = $cpu.Name
+    
+    Memory = [PSCustomObject]@{
+        TotalGB = [math]::Round($computer.TotalPhysicalMemory / 1GB, 2)
+        FreeGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
+    }
+    
+    Storage = $disks | ForEach-Object {
+        # Return one storage object per local disk
+        [PSCustomObject]@{
+            Drive = $_.DeviceID
+            TotalGB = [math]::Round($_.Size / 1GB, 2)
+            FreeGB = [math]::Round($_.FreeSpace / 1GB, 2)
+        }
+}
+
+BIOS = [PSCustomObject]@{
+    Manufacturer = $bios.Manufacturer
+    Version = $bios.SMBIOSBIOSVersion
+    SerialNumber = $bios.SerialNumber
+}
+
+    PowerShell = $PSVersionTable.PSVersion.ToString()
+}
+"""
