@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "argos-windows-toolkit"
+version = "0.1.0"
+description = "Windows Administration & Security Investigation Toolkit"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+
+authors = [
+    { name = "Wagner Luis" }
+]
+
+dependencies = [
+    "Jinja2==3.1.6",
+    "psutil==7.2.2",
+    "pywin32==312; sys_platform == 'win32'",
+    "questionary==2.1.1",
+    "rich==15.0.0",
+    "typer==0.27.0",
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "mypy==2.3.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.16.1",
+]
+
+
+[project.scripts]
+argos = "argos.app:main"
+
+
+[tool.setuptools]
+py-modules = ["main"]
+
+
+[tool.setuptools.packages.find]
+include = ["argos*"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=argos",
+    "--cov-report=term-missing",
+]
+
+
+[tool.coverage.run]
+branch = true
+source = ["argos"]
+
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+src = ["argos", "tests"]
+
+
+[tool.ruff.lint]
+select = [
+    "E",    # Erros de estilo
+    "F",    # Erros detectados pelo Pyflakes
+    "I",    # Organização dos imports
+    "B",    # Possíveis bugs
+    "UP",   # Modernização da sintaxe Python
+]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["argos", "tests"]
+warn_unused_configs = true
