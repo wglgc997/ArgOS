@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ArgOS.iml" filepath="$PROJECT_DIR$/.idea/ArgOS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/argos-cli.iml" filepath="$PROJECT_DIR$/.idea/argos-cli.iml" />
     </modules>
   </component>
 </project>

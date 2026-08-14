@@ -24,3 +24,6 @@ dist/
 output/
 *.log
 system_log.txt
+
+# Tests folder
+tests

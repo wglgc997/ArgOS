@@ -35,11 +35,7 @@ GET_SERVICES = (
     "StartMode, ProcessId"
 )
 
-GET_PROCESSES = (
-    "Get-Process | "
-    "Select-Object Name, Id, CPU, WorkingSet, "
-    "StartTime, Path"
-)
+GET_PROCESSES = "Get-Process | Select-Object Name, Id, CPU, WorkingSet, StartTime, Path"
 
 GET_FIREWALL_PROFILES = (
     "Get-NetFirewallProfile | "

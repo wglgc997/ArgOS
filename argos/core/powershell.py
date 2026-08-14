@@ -5,14 +5,13 @@ This module centralizes all interactions with PowerShell so the rest of
 the application never calls subprocess directly.
 """
 
-from __future__ import  annotations
+from __future__ import annotations
 
 import json
 import shutil
 import subprocess
 from dataclasses import dataclass
-from typing import Any
-
+from typing import Any, cast
 
 
 class PowerShellError(RuntimeError):
@@ -21,6 +20,7 @@ class PowerShellError(RuntimeError):
 
 class PowerShellNotFoundError(FileNotFoundError):
     """Raised when PowerShell is not installed or cannot be found."""
+
 
 @dataclass(slots=True)
 class PowerShellResult:
@@ -46,9 +46,9 @@ class PowerShellRunner:
     """
 
     def __init__(
-            self,
-            executable: str | None = None,
-            timeout: int = 60,
+        self,
+        executable: str | None = None,
+        timeout: int = 60,
     ) -> None:
         """
         Initialize the PowerShell runner.
@@ -84,15 +84,13 @@ class PowerShellRunner:
             return "pwsh"
         if shutil.which("powershell"):
             return "powershell"
-        raise PowerShellNotFoundError(
-            "PowerShell executable was not found."
-        )
+        raise PowerShellNotFoundError("PowerShell executable was not found.")
 
     def run(
-            self,
-            command: str,
-            *,
-            check: bool = True,
+        self,
+        command: str,
+        *,
+        check: bool = True,
     ) -> PowerShellResult:
         """
         Execute a PowerShell command.
@@ -141,8 +139,8 @@ class PowerShellRunner:
         return result
 
     def run_json(
-            self,
-            command: str,
+        self,
+        command: str,
     ) -> dict[str, Any] | list[Any] | str | int | bool | None:
         """
         Execute a command and parse JSON output.
@@ -158,10 +156,7 @@ class PowerShellRunner:
                 Parsed JSON object.
         """
 
-        json_command = (
-            f"&{{ {command} }} | "
-            "ConvertTo-Json -Depth 10 -Compress"
-        )
+        json_command = f"&{{ {command} }} | ConvertTo-Json -Depth 10 -Compress"
 
         result = self.run(json_command)
 
@@ -169,7 +164,10 @@ class PowerShellRunner:
             return None
 
         try:
-            return json.loads(result.stdout)
+            return cast(
+                dict[str, Any] | list[Any] | str | int | bool | None,
+                json.loads(result.stdout),
+            )
         except json.JSONDecodeError as error:
             raise PowerShellError(
                 "PowerShell returned invalid JSON.\n"
@@ -177,10 +175,9 @@ class PowerShellRunner:
                 f"Output: {result.stdout}"
             ) from error
 
-
     def run_line(
-            self,
-            command: str,
+        self,
+        command: str,
     ) -> list[str]:
         """
         Execute a command and return output lines.
@@ -188,15 +185,11 @@ class PowerShellRunner:
 
         result = self.run(command)
 
-        return[
-            line
-            for line in result.stdout.splitlines()
-            if line.strip()
-        ]
+        return [line for line in result.stdout.splitlines() if line.strip()]
 
     def exists(
-            self,
-            command: str,
+        self,
+        command: str,
     ) -> bool:
         """
         Check whether a command executes successfully.
