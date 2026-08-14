@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "argos-cli"
+version = "0.1.0"
+description = "Windows administration, diagnostics, and security investigation toolkit"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Wagner Carvalho" }
+]
+keywords = ["windows", "administration", "diagnostics", "security", "powershell"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "rich>=13.9",
+    "questionary>=2.1",
+    "psutil>=6.1",
+    "pywin32>=308; sys_platform == 'win32'",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.15",
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.9",
+]
+
+[project.scripts]
+argos = "argos.app:main"
+
+[project.urls]
+Repository = "https://github.com/wglgc997/Windows-Log-Script"
+Issues = "https://github.com/wglgc997/Windows-Log-Script/issues"
+
+[tool.setuptools.packages.find]
+include = ["argos*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers --strict-config"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["argos"]
+strict = true
