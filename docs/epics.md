@@ -9,19 +9,19 @@ ArgOS is evolving from the original **Windows-Log-Script** prototype into a modu
 
 ## Progress at a glance
 
-| Epic | Area | Status | Target outcome |
-| :--- | :--- | :---: | :--- |
-| [EP-01](#ep-01--foundation) | Foundation | 🟡 In progress | Stable application architecture |
+| Epic | Area |     Status     | Target outcome |
+| :--- | :--- |:--------------:| :--- |
+| [EP-01](#ep-01--foundation) | Foundation | 🟢 Implemented | Stable application architecture |
 | [EP-02](#ep-02--system-information) | System information | 🟡 In progress | Consolidated Windows inventory |
-| [EP-03](#ep-03--windows-event-logs) | Windows Event Logs | 🟠 Prototype | Searchable, exportable event analysis |
-| [EP-04](#ep-04--processes-and-services) | Processes and services | ⚪ Planned | Local workload inspection and control |
-| [EP-05](#ep-05--network-diagnostics) | Network diagnostics | ⚪ Planned | Network troubleshooting workspace |
-| [EP-06](#ep-06--security-audit) | Security audit | ⚪ Planned | Local security posture findings |
-| [EP-07](#ep-07--hardware-and-firmware) | Hardware and firmware | ⚪ Planned | Detailed device inventory |
-| [EP-08](#ep-08--utilities) | Utilities | ⚪ Planned | Hash, integrity, and password tools |
-| [EP-09](#ep-09--reports) | Reports | ⚪ Planned | Reusable investigation reports |
-| [EP-10](#ep-10--quality-packaging-and-release) | Quality and release | ⚪ Planned | Tested, installable releases |
-| [EP-11](#ep-11--interactive-cli-experience) | CLI experience | ⚪ Future | Polished interactive workflows |
+| [EP-03](#ep-03--windows-event-logs) | Windows Event Logs |  🟠 Prototype  | Searchable, exportable event analysis |
+| [EP-04](#ep-04--processes-and-services) | Processes and services |   ⚪ Planned   | Local workload inspection and control |
+| [EP-05](#ep-05--network-diagnostics) | Network diagnostics |   ⚪ Planned   | Network troubleshooting workspace |
+| [EP-06](#ep-06--security-audit) | Security audit |   ⚪ Planned   | Local security posture findings |
+| [EP-07](#ep-07--hardware-and-firmware) | Hardware and firmware |   ⚪ Planned   | Detailed device inventory |
+| [EP-08](#ep-08--utilities) | Utilities |   ⚪ Planned   | Hash, integrity, and password tools |
+| [EP-09](#ep-09--reports) | Reports |   ⚪ Planned   | Reusable investigation reports |
+| [EP-10](#ep-10--quality-packaging-and-release) | Quality and release |   ⚪ Planned   | Tested, installable releases |
+| [EP-11](#ep-11--interactive-cli-experience) | CLI experience |   ⚪ Future    | Polished interactive workflows |
 
 ### Status legend
 
@@ -48,7 +48,7 @@ Foundation → System Information → Event Logs → Core Admin Modules
 
 ## EP-01 — Foundation
 
-**Status:** 🟡 In progress  
+**Status:** 🟢 Implemented
 **Objective:** Build the shared architecture required by every ArgOS module.
 
 ### Available now
@@ -60,15 +60,14 @@ Foundation → System Information → Event Logs → Core Admin Modules
 - [x] Centralized reusable PowerShell command definitions
 - [x] Shared Rich console and visual theme helpers
 - [x] Initial dependency list
+- [x] Complete the application entry point and interactive main menu
+- [x] Detect and expose Windows administrator privileges
+- [x] Add shared `Finding` and `Severity` models
+- [x] Configure internal application logging
+- [x] Define configuration and error-handling conventions
+- [x] Complete packaging metadata in `pyproject.toml`
 
-### Remaining work
 
-- [ ] Complete the application entry point and interactive main menu
-- [ ] Detect and expose Windows administrator privileges
-- [ ] Add shared `Finding` and `Severity` models
-- [ ] Configure internal application logging
-- [ ] Define configuration and error-handling conventions
-- [ ] Complete packaging metadata in `pyproject.toml`
 
 ### Current architecture
 
@@ -76,14 +75,22 @@ Foundation → System Information → Event Logs → Core Admin Modules
 argos/
 ├── core/
 │   ├── powershell.py
-│   └── powershell_commands.py
+│   ├── powershell_commands.py
+│   └── privileges.py
+├── models/
+│   ├── __init__.py
+│   └── finding.py
 ├── modules/
 │   └── sys_information.py
 ├── ui/
 │   ├── console.py
 │   └── theme.py
 ├── __init__.py
-└── app.py
+├── __main__.py
+├── app.py
+├── config.py
+├── exceptions.py
+└── logging_config.py
 ```
 
 **Exit criteria:** ArgOS starts through a stable CLI entry point, provides shared logging and models, detects privilege level, and exposes consistent navigation and error handling.

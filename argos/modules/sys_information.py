@@ -45,6 +45,7 @@ def collect_system_information(
 
     return normalize_hardware_information(result)
 
+
 def normalize_hardware_information(
     system_info: dict[str, Any],
 ) -> dict[str, Any]:
@@ -57,7 +58,7 @@ def normalize_hardware_information(
 
     Returns:
             System information with normalized hardware fields.
-        """
+    """
 
     # Add missing hardware fields with an unavailable value
     for field in REQUIRED_HARDWARE_FIELDS:

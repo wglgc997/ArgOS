@@ -13,6 +13,7 @@ from argos.ui.console import (
     print_section,
     print_success,
     print_warning,
+    read_menu_choice,
     wait_for_user,
 )
 
@@ -27,5 +28,6 @@ __all__ = [
     "print_section",
     "print_success",
     "print_warning",
+    "read_menu_choice",
     "wait_for_user",
 ]
