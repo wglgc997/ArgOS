@@ -11,7 +11,14 @@ from argos.core.powershell import PowerShellRunner
 from argos.core.powershell_commands import GET_SYSTEM_INFORMATION
 
 
-
+REQUIRED_HARDWARE_FIELDS = (
+    "CPU",
+    "Memory",
+    "Storage",
+    "GPU",
+    "BaseBoard",
+    "BIOS",
+)
 def collect_system_information (
         runner: PowerShellRunner | None = None,
 ) -> dict[str, Any]:
@@ -36,4 +43,24 @@ def collect_system_information (
     if not isinstance(result, dict):
         raise ValueError("System information output must be a dictionary.")
 
-    return result
+    return normalize_hardware_information(result)
+
+def normalize_hardware_information(
+        system_info: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Ensure hardware fields are always present.
+
+        Args:
+            system_info:
+                Raw system information collected from PowerShell.
+
+    Returns:
+            System information with normalized hardware fields.
+        """
+
+    # Add missing hardware fields with an unavailable value
+    for field in REQUIRED_HARDWARE_FIELDS:
+        system_info.setdefault(field, "Unavailable")
+
+        return system_info
