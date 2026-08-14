@@ -1,604 +1,373 @@
-ArgOS --- Project Epics & Current Progress
+# ArgOS — Project Epics
 
-Windows Administration, Diagnostics & Security Toolkit
-Current scope: Windows only.
+> Product roadmap for a Windows administration, diagnostics, and security investigation toolkit.
 
-Project Vision
+ArgOS is evolving from the original **Windows-Log-Script** prototype into a modular Python CLI. The intended architecture combines structured PowerShell collection, reusable domain models, a Rich-based interface, internal logging, and focused Windows administration modules.
 
-ArgOS is a Python-based interactive CLI focused on Windows system
-administration, diagnostics, investigation, and security auditing.
+> [!NOTE]
+> **Platform scope:** Windows only. This document describes both implemented work and the planned product direction; it is not a list of currently available features.
 
-The project is being refactored from the original Windows-Log-Script
-into a modular application with a Rich-based interface, centralized
-PowerShell integration, reusable models, internal logging, and dedicated
-Windows administration modules.
+## Progress at a glance
 
-EP-01 --- Foundation
+| Epic | Area | Status | Target outcome |
+| :--- | :--- | :---: | :--- |
+| [EP-01](#ep-01--foundation) | Foundation | 🟡 In progress | Stable application architecture |
+| [EP-02](#ep-02--system-information) | System information | 🟡 In progress | Consolidated Windows inventory |
+| [EP-03](#ep-03--windows-event-logs) | Windows Event Logs | 🟠 Prototype | Searchable, exportable event analysis |
+| [EP-04](#ep-04--processes-and-services) | Processes and services | ⚪ Planned | Local workload inspection and control |
+| [EP-05](#ep-05--network-diagnostics) | Network diagnostics | ⚪ Planned | Network troubleshooting workspace |
+| [EP-06](#ep-06--security-audit) | Security audit | ⚪ Planned | Local security posture findings |
+| [EP-07](#ep-07--hardware-and-firmware) | Hardware and firmware | ⚪ Planned | Detailed device inventory |
+| [EP-08](#ep-08--utilities) | Utilities | ⚪ Planned | Hash, integrity, and password tools |
+| [EP-09](#ep-09--reports) | Reports | ⚪ Planned | Reusable investigation reports |
+| [EP-10](#ep-10--quality-packaging-and-release) | Quality and release | ⚪ Planned | Tested, installable releases |
+| [EP-11](#ep-11--interactive-cli-experience) | CLI experience | ⚪ Future | Polished interactive workflows |
 
-Objective: Build the architectural foundation required by all ArgOS
-modules.
+### Status legend
 
-Scope
+| Symbol | Meaning |
+| :---: | :--- |
+| 🟢 | Implemented |
+| 🟡 | In progress |
+| 🟠 | Prototype exists; integration is pending |
+| ⚪ | Planned or future work |
 
-Refactor the original project structure
+## Delivery path
 
-Rename the project to ArgOS
+```text
+Foundation → System Information → Event Logs → Core Admin Modules
+                                                 ├─ Processes & Services
+                                                 ├─ Network Diagnostics
+                                                 ├─ Security Audit
+                                                 └─ Hardware & Firmware
+                                                            ↓
+                                              Utilities → Reports → Release
+```
 
-Create the argos/ Python package
+---
 
-Configure project dependencies
+## EP-01 — Foundation
 
-Create centralized Rich console
+**Status:** 🟡 In progress  
+**Objective:** Build the shared architecture required by every ArgOS module.
 
-Create Rich visual theme
+### Available now
 
-Create interactive main menu
+- [x] `argos` Python package structure
+- [x] Centralized PowerShell process runner
+- [x] Automatic PowerShell 7 / Windows PowerShell detection
+- [x] JSON and line-based PowerShell result handling
+- [x] Centralized reusable PowerShell command definitions
+- [x] Shared Rich console and visual theme helpers
+- [x] Initial dependency list
 
-Add semantic colors for success, warning, and error states
+### Remaining work
 
-Detect Windows administrator privileges
+- [ ] Complete the application entry point and interactive main menu
+- [ ] Detect and expose Windows administrator privileges
+- [ ] Add shared `Finding` and `Severity` models
+- [ ] Configure internal application logging
+- [ ] Define configuration and error-handling conventions
+- [ ] Complete packaging metadata in `pyproject.toml`
 
-Create centralized PowerShell executor
+### Current architecture
 
-Create centralized PowerShell command definitions
-
-Create common models (Finding, Severity)
-
-Configure internal application logging
-
-Implemented architecture
-
+```text
 argos/
 ├── core/
-│   ├── __init__.py
-│   ├── logger.py
-│   ├── models.py
-│   ├── permissions.py
 │   ├── powershell.py
 │   └── powershell_commands.py
-│
+├── modules/
+│   └── sys_information.py
 ├── ui/
-│   ├── __init__.py
 │   ├── console.py
-│   ├── menus.py
 │   └── theme.py
-│
 ├── __init__.py
-├── __main__.py
 └── app.py
+```
 
-Current CLI foundation
+**Exit criteria:** ArgOS starts through a stable CLI entry point, provides shared logging and models, detects privilege level, and exposes consistent navigation and error handling.
 
-The application can display the ArgOS banner, render the main menu with
-Rich, show semantic status colors, detect whether the current process
-has administrator privileges, and execute PowerShell commands through a
-centralized runner.
+---
 
-Status: ✅ Foundation implemented.
+## EP-02 — System Information
 
-EP-02 --- System Information
+**Status:** 🟡 In progress — current milestone  
+**Objective:** Provide a consolidated, structured view of the local Windows environment.
 
-Objective: Provide a consolidated view of the local Windows
-environment.
+### Implemented collection
 
-Planned features
+- [x] Computer name and current user
+- [x] Windows edition, version, build, architecture, installation date, and boot time
+- [x] CPU model, manufacturer, cores, threads, and maximum clock speed
+- [x] Total and free physical memory
+- [x] Fixed-disk capacity and free space
+- [x] GPU, motherboard, and BIOS details
+- [x] Timezone and PowerShell version
+- [x] Normalization of required hardware fields
 
-Windows edition and version
+### Remaining work
 
-Windows build number
+- [ ] Calculate and present system uptime
+- [ ] Add system language and environment information
+- [ ] Render results through Rich panels and tables
+- [ ] Add graceful partial-failure handling
+- [ ] Add unit tests with mocked PowerShell results
+- [ ] Connect the collector to the final CLI navigation
 
-Computer name
+**Technical direction:** Use CIM/PowerShell and Python system APIs through `PowerShellRunner`; avoid scattered or duplicated subprocess calls.
 
-Current user
+**Exit criteria:** Users can open the system-information module from the CLI and receive a readable, tested overview even when individual data sources are unavailable.
 
-Architecture
+---
 
-System uptime
+## EP-03 — Windows Event Logs
 
-CPU information
+**Status:** 🟠 Prototype exists; architectural refactor pending  
+**Objective:** Rebuild and expand the event-log functionality that originated the project.
 
-Physical memory
+### Prototype evidence
 
-Storage information
+- [x] Read the Windows System event log
+- [x] Export collected events to a text file
+- [x] Process collections exceeding 50,000 System events
 
-GPU information
+### Planned sources
 
-Motherboard information
+- [ ] System, Application, Security, and Setup
+- [ ] Microsoft Defender
+- [ ] PowerShell
+- [ ] Task Scheduler
 
-BIOS information
+### Planned analysis and export
 
-PowerShell version
+- [ ] Limit returned events
+- [ ] Filter by event ID, severity, source, and date
+- [ ] Search event messages
+- [ ] Display results in Rich tables
+- [ ] Export TXT, JSON, and CSV
+- [ ] Apply consistent severity visualization
 
-Timezone
+| Severity | Visual treatment |
+| :--- | :--- |
+| Information / success | 🟢 Green |
+| Warning | 🟡 Yellow |
+| Error / critical / failure | 🔴 Red |
 
-System language
+**Exit criteria:** Users can select a log, constrain a query, inspect results safely, and export the same normalized records in supported formats.
 
-Environment information
+---
 
-Technical direction
+## EP-04 — Processes and Services
 
-Use CIM/PowerShell and Python system APIs through the existing
-PowerShellRunner, avoiding duplicated subprocess calls.
+**Status:** ⚪ Planned  
+**Objective:** Inspect and administer local Windows processes and services.
 
-Status: ⏳ Planned.
+| Processes | Services |
+| :--- | :--- |
+| List and search by name or PID | List and search services |
+| PID and parent PID | Running, stopped, and disabled states |
+| CPU and memory usage | Startup mode and process ID |
+| Owner, executable path, and start time | Start, stop, and restart |
+| Terminate with confirmation | Confirm every state-changing action |
 
-EP-03 --- Windows Event Logs
+> [!CAUTION]
+> Administrative or destructive actions must require explicit confirmation and clearly identify their target.
 
-Objective: Refactor and expand the functionality that originated the
-project.
+**Exit criteria:** Inspection works without elevation where Windows permits it, while every state-changing operation is deliberate, confirmed, and clearly reported.
 
-Existing functionality
+---
 
-Read Windows System Event Log
+## EP-05 — Network Diagnostics
 
-Export collected events to a text file
+**Status:** ⚪ Planned  
+**Objective:** Provide a focused workspace for Windows network troubleshooting and investigation.
 
-Successfully process large event collections
+### Inventory
 
-The original prototype was able to collect more than 50,000 System
-events and write them to system_log.txt.
+- Interfaces, IPv4/IPv6 addresses, MAC addresses, and link state
+- Default gateway, DNS configuration, proxy configuration, and network profile
+- Routing table, ARP table, and firewall status
 
-Planned refactor
+### Connections
 
-Integrate event collection into the ArgOS architecture
+- Active TCP connections and UDP endpoints
+- Listening ports
+- Owning process correlation
 
-System logs
+### Diagnostics
 
-Application logs
+- Ping, DNS lookup, TCP port test, and traceroute
 
-Security logs
+**Exit criteria:** Users can move from local configuration to connection ownership and active diagnostics without leaving ArgOS.
 
-Setup logs
+---
 
-Windows Defender logs
+## EP-06 — Security Audit
 
-PowerShell logs
+**Status:** ⚪ Planned  
+**Objective:** Assess the local Windows security posture and produce actionable findings.
 
-Task Scheduler logs
+ArgOS will report administrative and security observations; it will not present itself as antivirus or EDR software.
 
-Limit number of returned events
+### Planned checks
 
-Filter by Event ID
+| Protection | Identity and access | Exposure and activity |
+| :--- | :--- | :--- |
+| Microsoft Defender and signatures | Local users and disabled accounts | Listening ports and network shares |
+| Real-time protection | Local Administrators group | Open sessions |
+| Windows Firewall profiles | Basic password policy | Authentication events and failed logins |
+| BitLocker, Secure Boot, TPM, and UAC | Administrator privilege status | Windows Update status |
 
-Filter by severity
+### Finding model
 
-Filter by source
+Each finding should contain, where applicable:
 
-Filter by date
+```text
+Severity → Title → Description → Evidence → Source → Recommendation
+```
 
-Search event messages
+| Level | Meaning |
+| :---: | :--- |
+| 🟢 Success | Expected protection or configuration is present |
+| 🟡 Warning | Review is recommended |
+| 🔴 Error | A check failed or an unsafe condition exists |
+| 🔴 Critical | Immediate attention is recommended |
 
-Rich table visualization
+**Exit criteria:** Checks return normalized findings with evidence and useful recommendations, without overstating certainty or product scope.
 
-TXT export
+---
 
-JSON export
+## EP-07 — Hardware and Firmware
 
-CSV export
+**Status:** ⚪ Planned  
+**Objective:** Build a complete Windows hardware and firmware inventory.
 
-Severity visualization
+- Computer manufacturer, model, and serial number
+- CPU, RAM, and memory slots
+- Motherboard and GPU
+- Storage devices
+- BIOS version, date, and BIOS/UEFI mode
+- Secure Boot and TPM
+- Battery information
 
-🟢 Information / Success
+**Technical direction:** Prefer supported PowerShell CIM cmdlets over deprecated WMIC-based implementations. Reuse data already collected by EP-02 instead of issuing duplicate queries.
 
-🟡 Warning
+**Exit criteria:** ArgOS provides a normalized device inventory and handles machines with multiple disks, GPUs, batteries, or missing firmware fields.
 
-🔴 Error / Critical / Failure
+---
 
-Status: 🟡 Prototype exists; architectural refactor pending.
+## EP-08 — Utilities
 
-EP-04 --- Processes & Services
+**Status:** ⚪ Planned  
+**Objective:** Add small, dependable tools for administration and investigation.
 
-Objective: Inspect and administer Windows processes and services.
+### Hash and integrity tools
 
-Processes
+- SHA-256, SHA-512, SHA-3, and BLAKE2
+- MD5 and SHA-1 for compatibility only
+- Hash text and files
+- Compare hashes and verify file integrity
 
-List running processes
+### Password generator
 
-PID and parent PID
+- Cryptographically secure generation with Python's `secrets` module
+- Configurable length and character groups
+- Optional ambiguous-character exclusion
+- Password-strength indication
 
-CPU utilization
+> [!IMPORTANT]
+> Generated passwords and sensitive input must never be written automatically to ArgOS logs or reports.
 
-Memory utilization
+**Exit criteria:** Utilities behave consistently from the CLI, validate input, and avoid persisting secrets.
 
-Process owner
+---
 
-Executable path
+## EP-09 — Reports
 
-Process start time
+**Status:** ⚪ Planned  
+**Objective:** Consolidate ArgOS data and findings into reusable reports.
 
-Search by name or PID
+### Formats
 
-Terminate a process with confirmation
+| TXT | JSON | CSV | HTML |
+| :---: | :---: | :---: | :---: |
+| Human-readable notes | Structured automation | Tabular analysis | Shareable visual report |
 
-Services
+### Report content
 
-List Windows services
+- System and security overview
+- Critical events
+- Processes and services
+- Network information
+- Hardware and BIOS
+- Findings and recommendations
 
-Running services
+Reports will share the CLI's severity semantics and must clearly record collection time, host, module status, and unavailable data.
 
-Stopped services
+**Exit criteria:** A single normalized result can be exported consistently without rerunning collection for each format.
 
-Disabled services
+---
 
-Startup mode
+## EP-10 — Quality, Packaging, and Release
 
-Search services
+**Status:** ⚪ Planned  
+**Objective:** Prepare ArgOS for reliable public distribution.
 
-Start service
+| Quality | Automation | Documentation | Distribution |
+| :--- | :--- | :--- | :--- |
+| Unit and integration tests | GitHub Actions | README and architecture guide | CLI entry point |
+| Pytest and coverage | Automated linting | Installation and usage | Python package |
+| Ruff and MyPy | Automated tests | Screenshots and troubleshooting | PyInstaller evaluation |
+| Build validation | Release checks | Changelog | GitHub Releases and versioning |
 
-Stop service
+**Exit criteria:** A clean checkout can be linted, type-checked, tested, packaged, and released through documented, repeatable steps.
 
-Restart service
+---
 
-Administrative or destructive actions must require explicit
-confirmation.
+## EP-11 — Interactive CLI Experience
 
-Status: ⏳ Planned.
+**Status:** ⚪ Future enhancement  
+**Objective:** Turn the functional CLI into a polished and consistent administration interface.
 
-EP-05 --- Network Diagnostics
+- Improved keyboard and breadcrumb navigation
+- Contextual status information and progress indicators
+- Rich tables, search, and filtering
+- Consistent confirmations and visual language
+- User configuration file
+- Clear handling of elevation requirements and partial failures
 
-Objective: Provide Windows network troubleshooting and investigation
-tools.
+**Exit criteria:** Common workflows are discoverable, consistent, keyboard-friendly, and provide immediate feedback for long-running operations.
 
-Planned features
+---
 
-Network interfaces
+## Current milestone
 
-IPv4 addresses
+### EP-02 — Complete the system-information vertical slice
 
-IPv6 addresses
+The next milestone is to take the existing structured collector through the full application path:
 
-MAC addresses
+```text
+PowerShell/CIM → PowerShellRunner → Normalized Python data → Rich UI → Tests
+```
 
-Default gateway
+Completing this slice will establish the implementation pattern reused by Network, Security, Hardware, and Event Log modules.
 
-DNS configuration
+### Suggested completion sequence
 
-Active TCP connections
+1. Correct and test system-information normalization.
+2. Add a Rich presentation layer for collected data.
+3. Connect the module to the application entry point.
+4. Add privilege and partial-failure messaging.
+5. Establish automated linting and tests before expanding collection modules.
 
-UDP endpoints
+---
 
-Listening ports
+## Roadmap principles
 
-Process associated with connections
-
-Routing table
-
-ARP table
-
-Ping
-
-DNS lookup
-
-TCP port test
-
-Traceroute
-
-Proxy configuration
-
-Windows network profile
-
-Firewall status
-
-Status: ⏳ Planned.
-
-EP-06 --- Security Audit
-
-Objective: Perform a local Windows security posture assessment.
-
-ArgOS will provide administrative/security findings rather than
-presenting itself as an antivirus or EDR product.
-
-Planned checks
-
-Administrator privilege status
-
-Microsoft Defender status
-
-Defender real-time protection
-
-Defender signature information
-
-Windows Firewall profiles
-
-BitLocker
-
-Secure Boot
-
-TPM
-
-UAC
-
-Windows Update status
-
-Local users
-
-Local Administrators group
-
-Open sessions
-
-Network shares
-
-Listening ports
-
-Authentication events
-
-Failed logins
-
-Disabled accounts
-
-Basic password policy
-
-Finding model
-
-Security results will use the common Finding/Severity architecture:
-
-🟢 SUCCESS
-🟡 WARNING
-🔴 ERROR
-🔴 CRITICAL
-
-Where appropriate, findings can contain a description, evidence, source,
-severity, and recommendation.
-
-Status: ⏳ Planned.
-
-EP-07 --- Hardware & Firmware
-
-Objective: Inspect Windows hardware and firmware information.
-
-Planned features
-
-Computer manufacturer
-
-Computer model
-
-Serial number
-
-CPU
-
-RAM
-
-Memory slots
-
-Motherboard
-
-GPU
-
-Storage devices
-
-BIOS version
-
-BIOS date
-
-BIOS/UEFI mode
-
-Secure Boot
-
-TPM
-
-Battery information
-
-PowerShell CIM cmdlets will be preferred over deprecated WMIC-based
-implementations.
-
-Status: ⏳ Planned.
-
-EP-08 --- Utilities
-
-Objective: Add useful administration and investigation utilities.
-
-Hash tools
-
-SHA-256
-
-SHA-512
-
-SHA-3
-
-BLAKE2
-
-MD5 for compatibility
-
-SHA-1 for compatibility
-
-Hash text
-
-Hash files
-
-Compare hashes
-
-File integrity verification
-
-Password generator
-
-Cryptographically secure generation using secrets
-
-Custom password length
-
-Uppercase characters
-
-Lowercase characters
-
-Numbers
-
-Symbols
-
-Optional ambiguous-character exclusion
-
-Password strength indication
-
-Generated passwords must not be automatically written to ArgOS logs.
-
-Status: ⏳ Planned.
-
-EP-09 --- Reports
-
-Objective: Consolidate ArgOS findings into reusable reports.
-
-Planned formats
-
-TXT
-
-JSON
-
-CSV
-
-HTML
-
-HTML report sections
-
-System overview
-
-Security overview
-
-Critical events
-
-Processes
-
-Services
-
-Network information
-
-Hardware and BIOS
-
-Findings and recommendations
-
-Reports will use the same green/yellow/red severity model as the CLI.
-
-Status: ⏳ Planned.
-
-EP-10 --- Quality, Packaging & Release
-
-Objective: Prepare ArgOS for reliable public distribution.
-
-Quality
-
-Unit tests
-
-Integration tests
-
-Pytest
-
-Coverage reporting
-
-Ruff
-
-MyPy
-
-CI/CD
-
-GitHub Actions
-
-Automated linting
-
-Automated tests
-
-Build validation
-
-Documentation
-
-Complete README
-
-Architecture documentation
-
-Installation guide
-
-Usage examples
-
-Screenshots
-
-Troubleshooting guide
-
-Changelog
-
-Packaging
-
-Define CLI entry point
-
-Package Python application
-
-Evaluate PyInstaller executable
-
-GitHub Releases
-
-Versioning strategy
-
-Status: ⏳ Planned.
-
-EP-11 --- Interactive CLI Experience
-
-Objective: Evolve the CLI from a functional menu into a polished
-administration interface.
-
-Planned improvements
-
-Improved keyboard navigation
-
-Breadcrumb navigation
-
-Status information
-
-Progress indicators
-
-Rich tables
-
-Search and filtering
-
-Consistent confirmation prompts
-
-Configuration file
-
-Consistent visual language across modules
-
-Status: ⏳ Future enhancement.
-
-Current Project Status
-
-EP-01  Foundation                    ✅ Implemented
-EP-02  System Information            ⏳ Next
-EP-03  Windows Event Logs            🟡 Prototype exists
-EP-04  Processes & Services          ⏳ Planned
-EP-05  Network Diagnostics           ⏳ Planned
-EP-06  Security Audit                ⏳ Planned
-EP-07  Hardware & Firmware           ⏳ Planned
-EP-08  Utilities                     ⏳ Planned
-EP-09  Reports                       ⏳ Planned
-EP-10  Quality & Release             ⏳ Planned
-EP-11  Interactive CLI Experience    ⏳ Future
-
-Current Technical Foundation
-
-ArgOS currently has the architectural foundation required to begin
-implementing Windows modules:
-
-Python modular package structure
-
-Rich-based CLI
-
-Centralized visual theme
-
-Main application menu
-
-Windows administrator privilege detection
-
-Centralized PowerShell execution
-
-Reusable PowerShell commands
-
-Common finding/severity models
-
-Internal logging
-
-Existing Windows Event Log prototype
-
-Next Milestone
-
-EP-02 --- System Information
-
-The next milestone is to connect the existing PowerShell foundation to
-real Windows system data and present the results through the Rich
-interface.
-
-This will establish the implementation pattern that later modules such
-as Network, Security, Hardware, and Event Logs can reuse.
+- **Read-only first:** collection and inspection are the default.
+- **Confirm state changes:** potentially disruptive actions always require explicit confirmation.
+- **One PowerShell boundary:** subprocess execution remains centralized.
+- **Structured data first:** presentation and export consume the same normalized results.
+- **Graceful degradation:** one unavailable source should not invalidate an entire report.
+- **Evidence over claims:** security findings include their source and supporting evidence.
