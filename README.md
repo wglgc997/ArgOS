@@ -2,6 +2,24 @@
 
 > A Python toolkit for Windows administration, diagnostics, and security investigation.
 
+## Technologies & Tools
+
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-7%2B-5391FE?logo=powershell&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
+![Rich](https://img.shields.io/badge/CLI-Rich-E85D04)
+![Pytest](https://img.shields.io/badge/Tests-pytest-0A9EDC?logo=pytest&logoColor=white)
+![Ruff](https://img.shields.io/badge/Lint-Ruff-D7FF64?logo=ruff&logoColor=black)
+![mypy](https://img.shields.io/badge/Types-mypy-2A6DB2)
+![GitHub Actions](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+
+- **Core:** Python 3.11+, PowerShell
+- **Interface:** Rich, Questionary
+- **System integration:** psutil, pywin32
+- **Templates:** Jinja2
+- **Quality:** pytest, Ruff, mypy
+- **Automation:** Git and GitHub Actions
+
 ArgOS collects structured information from a Windows computer through a centralized PowerShell integration. The project is being built as a modular command-line application that brings system inventory, troubleshooting, and local security checks into one consistent interface.
 
 > [!IMPORTANT]
