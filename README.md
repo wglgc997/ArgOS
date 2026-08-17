@@ -8,7 +8,7 @@
 ![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange?style=flat-square)
 ![License](https://img.shields.io/github/license/wglgc997/ArgOS?style=flat-square)
 
-![demo](docs/images/gif-ezgif.com-video-to-gif-converter.gif)
+![demo](docs/images/ezgif.com-video-to-gif-converter%20(1).gif)
 
 ArgOS brings Windows system information, diagnostics, and security investigation into a consistent terminal interface built with Python, PowerShell, and Rich.
 
