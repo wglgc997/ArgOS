@@ -43,8 +43,8 @@ dev = [
 argos = "argos.app:main"
 
 [project.urls]
-Repository = "https://github.com/wglgc997/Windows-Log-Script"
-Issues = "https://github.com/wglgc997/Windows-Log-Script/issues"
+Repository = "https://github.com/wglgc997/ArgOS.git"
+Issues = "https://github.com/wglgc997/ArgOS/issues"
 
 [tool.setuptools.packages.find]
 include = ["argos*"]
