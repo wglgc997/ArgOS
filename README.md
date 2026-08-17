@@ -1,65 +1,48 @@
 # ArgOS
 
-> A Python toolkit for Windows administration, diagnostics, and security investigation.
+> A modular Windows administration and diagnostics CLI that turns PowerShell system data into structured, readable insights.
 
-## Technologies & Tools
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?style=flat-square&logo=powershell&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=flat-square&logo=windows&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange?style=flat-square)
+![License](https://img.shields.io/github/license/wglgc997/ArgOS?style=flat-square)
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
-![PowerShell](https://img.shields.io/badge/PowerShell-7%2B-5391FE?logo=powershell&logoColor=white)
-![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
-![Rich](https://img.shields.io/badge/CLI-Rich-E85D04)
-![Pytest](https://img.shields.io/badge/Tests-pytest-0A9EDC?logo=pytest&logoColor=white)
-![Ruff](https://img.shields.io/badge/Lint-Ruff-D7FF64?logo=ruff&logoColor=black)
-![mypy](https://img.shields.io/badge/Types-mypy-2A6DB2)
+![demo](docs/images/ezgif.com-video-to-gif-converter%20(1).gif)
 
-- **Core:** Python 3.11+, PowerShell
-- **Interface:** Rich, Questionary
-- **System integration:** psutil, pywin32
-- **Templates:** Jinja2
-- **Quality:** pytest, Ruff, mypy
+ArgOS brings Windows system information, diagnostics, and security investigation into a consistent terminal interface built with Python, PowerShell, and Rich.
 
-ArgOS collects structured information from a Windows computer through a centralized PowerShell integration. The project is being built as a modular command-line application that brings system inventory, troubleshooting, and local security checks into one consistent interface.
+The current pre-alpha version provides an interactive CLI, administrator privilege detection, structured PowerShell execution, internal logging, and a system-information module.
 
 > [!IMPORTANT]
-> ArgOS is under active development. The system-information collector and core PowerShell layer are available now; most other modules described below are planned.
+> ArgOS is under active development. The system-information collector and core PowerShell layer are available now; most other modules described in the roadmap are planned.
 
-## Why ArgOS?
+## ✨ Available Now
 
-Windows investigation often means jumping between commands, management consoles, and scripts. ArgOS aims to provide a single, reusable toolkit with:
+- Interactive Rich-powered main menu
+- Windows administrator privilege detection
+- Automatic PowerShell 7 and Windows PowerShell detection
+- Centralized and structured PowerShell execution
+- Internal application logging
+- System, hardware, BIOS, storage, CPU, memory, and GPU information
+- Normalized JSON-compatible results
 
-- structured results instead of unprocessed command output;
-- centralized and testable PowerShell execution;
-- a consistent terminal experience powered by Rich;
-- reusable modules for administration and investigation;
-- exportable findings and reports.
+ArgOS prefers PowerShell 7 (`pwsh`) and falls back to Windows PowerShell when necessary. PowerShell results are converted to JSON and returned to Python as structured data.
 
-## Current capabilities
+## 🚀 Quick Start
 
-The current implementation can collect and normalize:
-
-- computer name and current user;
-- Windows edition, version, build, architecture, and boot time;
-- CPU and physical memory details;
-- fixed-disk capacity and free space;
-- GPU, motherboard, and BIOS information;
-- timezone and PowerShell version.
-
-ArgOS automatically prefers PowerShell 7 (`pwsh`) and falls back to Windows PowerShell when necessary. PowerShell results are converted to JSON and returned to Python as structured data.
-
-## Requirements
+### Requirements
 
 - Windows 10 or Windows 11
-- Python 3.10 or newer
+- Python 3.11 or later
 - PowerShell 7 or Windows PowerShell 5.1
 
-Some future checks, including Security event logs, Defender, firewall, BitLocker, and service administration, may require an elevated terminal.
-
-## Quick start
+### Installation
 
 Clone the repository and enter the project directory:
 
 ```powershell
-git clone https://github.com/wglgc997/Windows-Log-Script.git ArgOS
+git clone https://github.com/wglgc997/ArgOS.git
 cd ArgOS
 ```
 
@@ -70,19 +53,35 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Install the dependencies and run ArgOS:
+Install and start ArgOS:
 
 ```powershell
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python main.py
+python -m pip install .
+argos
 ```
 
-The current entry point prints the collected system information as a Python dictionary. A complete interactive CLI and formatted Rich views are part of the ongoing work.
+You can also run the application as a Python module:
 
-## Example output
+```powershell
+python -m argos
+```
 
-Values vary by computer, but the collected data follows this shape:
+## 🖥️ Usage
+
+Start ArgOS from an activated virtual environment:
+
+```powershell
+argos
+```
+
+The main screen displays the current administrator privilege level and the available modules. Select `System information` to collect structured Windows, hardware, storage, BIOS, and PowerShell details.
+
+Some future administration and security operations will require an elevated PowerShell terminal.
+
+## 📋 Example Output
+
+Values vary by computer, but the collected data follows this structure:
 
 ```python
 {
@@ -107,61 +106,94 @@ Values vary by computer, but the collected data follows this shape:
 }
 ```
 
-## Project structure
+## 🏗️ How It Works
+
+```mermaid
+flowchart LR
+    A["PowerShell and CIM"] --> B["PowerShell runner"]
+    B --> C["Normalized Python data"]
+    C --> D["Rich CLI"]
+```
+
+The PowerShell integration is centralized in `argos/core/`. Individual modules collect and normalize domain data before the application presents it through the shared Rich interface.
+
+## 🧰 Technologies
+
+- **Core:** Python 3.11+, PowerShell
+- **Interface:** Rich, Questionary
+- **System integration:** psutil, pywin32
+- **Templates:** Jinja2
+- **Development:** pytest, Ruff, mypy
+
+## 📁 Project Structure
 
 ```text
 ArgOS/
-|-- argos/
-|   |-- core/                 # PowerShell runner and reusable commands
-|   |-- modules/              # Administration and investigation modules
-|   |-- ui/                   # Rich console helpers and visual theme
-|   `-- app.py                # Application layer (in development)
-|-- docs/
-|   `-- epics.md              # Detailed roadmap and project progress
-|-- main.py                   # Current development entry point
-`-- requirements.txt          # Runtime and development dependencies
+├── argos/
+│   ├── core/                 # PowerShell runner and reusable commands
+│   ├── models/               # Shared findings and severity models
+│   ├── modules/              # Administration and investigation modules
+│   ├── ui/                   # Rich console helpers and visual theme
+│   └── app.py                # Interactive application entry point
+├── docs/
+│   └── epics.md              # Detailed roadmap and project progress
+├── main.py                   # Source-tree compatibility entry point
+├── pyproject.toml            # Package metadata and tool configuration
+└── requirements.txt          # Development dependency list
 ```
 
-## Roadmap
+## 🗺️ Roadmap
 
-| Area | Status |
-| --- | --- |
-| Core PowerShell integration | Implemented |
-| System information | In progress |
-| Windows Event Logs | Prototype / refactor planned |
-| Processes and services | Planned |
-| Network diagnostics | Planned |
-| Local security audit | Planned |
-| Hardware and firmware | Planned |
-| Hash and password utilities | Planned |
-| JSON, CSV, TXT, and HTML reports | Planned |
-| Packaging, tests, and CI/CD | Planned |
+- [x] Application foundation and interactive CLI
+- [x] PowerShell integration and administrator detection
+- [ ] Complete system-information presentation
+- [ ] Windows Event Log analysis
+- [ ] Processes and services
+- [ ] Network diagnostics
+- [ ] Local security audit
+- [ ] Reports and exports
+- [ ] Tests, CI/CD, packaging, and releases
 
-See [Project Epics](docs/epics.md) for the detailed scope and milestones.
+See the [Project Epics](docs/epics.md) for the complete development plan.
 
-## Safety and scope
+## ⚠️ Safety and Scope
 
 ArgOS is an administration and investigation aid. It is not an antivirus, EDR platform, or replacement for professional incident-response tooling.
 
 Read-only collection is preferred by design. Features that change system state, such as terminating processes or controlling services, are planned to require explicit confirmation. Review commands before using the project on production systems.
 
-## Contributing
+## 🧪 Development
+
+Install ArgOS with its development dependencies:
+
+```powershell
+python -m pip install -e ".[dev]"
+```
+
+Run the currently configured static quality checks:
+
+```powershell
+ruff check .
+mypy argos
+```
+
+The automated test suite and CI workflow are planned as part of the quality and release epic.
+
+## 🤝 Contributing
 
 Contributions, bug reports, and suggestions are welcome. To contribute:
 
 1. Fork the repository and create a focused branch.
 2. Keep PowerShell execution inside `argos/core/powershell.py` and reusable commands inside `argos/core/powershell_commands.py`.
-3. Add or update tests for behavioral changes.
-4. Run the quality checks before opening a pull request:
+3. Add or update tests when introducing behavioral changes.
+4. Run the available quality checks before opening a pull request.
 
-```powershell
-pytest
-ruff check .
-mypy argos
-```
+For larger features, [open an issue](https://github.com/wglgc997/ArgOS/issues) first so the scope can be aligned with the roadmap.
 
-If you are proposing a larger feature, open an issue first so its scope can be aligned with the roadmap.
+## 👤 Author
 
-## Project status
+Created by [Wagner Carvalho](https://github.com/wglgc997) as a practical project focused on Windows administration, PowerShell automation, infrastructure diagnostics, and Python software engineering.
 
-ArgOS is currently a pre-release project. Interfaces, output structures, and installation steps may change while the CLI foundation and first modules are completed.
+## 📄 License
+
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
