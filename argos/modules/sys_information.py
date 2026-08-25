@@ -5,13 +5,19 @@ This module collects Windows sys info via PS.
 
 from __future__ import annotations
 
+import re
 from copy import deepcopy
+from datetime import UTC, datetime
 from typing import Any
 
 from argos.core.powershell import PowerShellRunner
 from argos.core.powershell_commands import GET_SYSTEM_INFORMATION
 
 UNAVAILABLE = "Unavailable"
+
+POWERSHELL_DATE_PATTERN = re.compile(
+    r"^/Date\((?P<milliseconds>-?\d+)(?:[+-]\d{4})?\)/$"
+)
 
 SCALAR_FIELDS = ("Computer", "WindowsBuild", "Architecture", "LocalUser", "PowerShell")
 
@@ -90,6 +96,37 @@ def collect_system_information(
     return normalize_hardware_information(result)
 
 
+def normalize_timestamp(value: Any) -> str:
+    """Convert a PowerShell or ISO-8601 timestamp to UTC ISO 8601."""
+
+    if not isinstance(value, str) or value == UNAVAILABLE:
+        return UNAVAILABLE
+
+    powershell_match = POWERSHELL_DATE_PATTERN.fullmatch(value)
+
+    if powershell_match:
+        try:
+            milliseconds = int(powershell_match.group("milliseconds"))
+            parsed = datetime.fromtimestamp(
+                milliseconds / 1000,
+                tz=UTC,
+            )
+        except (OSError, OverflowError, ValueError):
+            return UNAVAILABLE
+    else:
+        try:
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return UNAVAILABLE
+
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=UTC)
+        else:
+            parsed = parsed.astimezone(UTC)
+
+    return parsed.isoformat().replace("+00:00", "Z")
+
+
 def value_or_unavailable(value: Any) -> Any:
     """Replace missing and blank values with the unavailable marker."""
     if value is None or value == "":
@@ -152,4 +189,11 @@ def normalize_hardware_information(
             expected_fields,
         )
 
+    windows_version = normalized["WindowsVersion"]
+    windows_version["InstallDate"] = normalize_timestamp(windows_version["InstallDate"])
+    windows_version["LastBootUpTime"] = normalize_timestamp(
+        windows_version["LastBootUpTime"]
+    )
+    bios = normalized["BIOS"]
+    bios["ReleaseDate"] = normalize_timestamp(bios["ReleaseDate"])
     return normalized
