@@ -127,6 +127,65 @@ def normalize_timestamp(value: Any) -> str:
     return parsed.isoformat().replace("+00:00", "Z")
 
 
+def unavailable_uptime() -> dict[str, int | str]:
+    """Return the stable structure used when uptime cannot be calculated."""
+
+    return {
+        "TotalSeconds": UNAVAILABLE,
+        "Days": UNAVAILABLE,
+        "Hours": UNAVAILABLE,
+        "Minutes": UNAVAILABLE,
+        "Seconds": UNAVAILABLE,
+        "Display": UNAVAILABLE,
+    }
+
+
+def calculate_uptime(
+    last_boot_time: Any,
+    *,
+    current_time: datetime | None = None,
+) -> dict[str, int | str]:
+    """Calculate system uptime from a normalized last boot timestamp."""
+    if not isinstance(last_boot_time, str) or last_boot_time == UNAVAILABLE:
+        return unavailable_uptime()
+
+    try:
+        boot_time = datetime.fromisoformat(last_boot_time.replace("Z", "+00:00"))
+
+    except ValueError:
+        return unavailable_uptime()
+
+    if boot_time.tzinfo is None:
+        boot_time = boot_time.replace(tzinfo=UTC)
+    else:
+        boot_time = boot_time.astimezone(UTC)
+
+    now = current_time or datetime.now(UTC)
+
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=UTC)
+    else:
+        now = now.astimezone(UTC)
+
+    total_seconds = int((now - boot_time).total_seconds())
+
+    if total_seconds < 0:
+        return unavailable_uptime()
+
+    days, remainder = divmod(total_seconds, 86_400)
+    hours, remainder = divmod(remainder, 3_600)
+    minutes, seconds = divmod(remainder, 60)
+
+    return {
+        "TotalSeconds": total_seconds,
+        "Days": days,
+        "Hours": hours,
+        "Minutes": minutes,
+        "Seconds": seconds,
+        "Display": f"{days}d {hours:02d}h {minutes:02d}m {seconds:02d}s",
+    }
+
+
 def value_or_unavailable(value: Any) -> Any:
     """Replace missing and blank values with the unavailable marker."""
     if value is None or value == "":
@@ -196,4 +255,7 @@ def normalize_hardware_information(
     )
     bios = normalized["BIOS"]
     bios["ReleaseDate"] = normalize_timestamp(bios["ReleaseDate"])
+
+    normalized["Uptime"] = calculate_uptime(windows_version["LastBootUpTime"])
+
     return normalized
