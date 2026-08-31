@@ -112,10 +112,11 @@ argos/
 - [x] GPU, motherboard, and BIOS details
 - [x] Timezone and PowerShell version
 - [x] Normalization of required hardware fields
+- [x] Calculate and present system uptime
 
 ### Remaining work
 
-- [ ] Calculate and present system uptime
+
 - [ ] Add system language and environment information
 - [ ] Render results through Rich panels and tables
 - [ ] Add graceful partial-failure handling
