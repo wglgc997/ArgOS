@@ -7,6 +7,7 @@
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=flat-square&logo=windows&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange?style=flat-square)
 ![License](https://img.shields.io/github/license/wglgc997/ArgOS?style=flat-square)
+[![CI](https://github.com/wglgc997/ArgOS/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/wglgc997/ArgOS/actions/workflows/ci.yml)
 
 ![demo](docs/images/ezgif.com-video-to-gif-converter%20(1).gif)
 
@@ -144,6 +145,7 @@ ArgOS/
 
 ## 🗺️ Roadmap
 
+- [x] Tests, CI/CD, packaging, and releases
 - [x] Application foundation and interactive CLI
 - [x] PowerShell integration and administrator detection
 - [ ] Complete system-information presentation
@@ -152,7 +154,7 @@ ArgOS/
 - [ ] Network diagnostics
 - [ ] Local security audit
 - [ ] Reports and exports
-- [ ] Tests, CI/CD, packaging, and releases
+
 
 See the [Project Epics](docs/epics.md) for the complete development plan.
 
