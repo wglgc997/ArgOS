@@ -49,19 +49,11 @@ def collect_system_information(
 def normalize_hardware_information(
     system_info: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Ensure hardware fields are always present.
+    """Return a copy with missing or null hardware fields normalized."""
+    normalized = system_info.copy()
 
-        Args:
-            system_info:
-                Raw system information collected from PowerShell.
-
-    Returns:
-            System information with normalized hardware fields.
-    """
-
-    # Add missing hardware fields with an unavailable value
     for field in REQUIRED_HARDWARE_FIELDS:
-        system_info.setdefault(field, "Unavailable")
+        if normalized.get(field) is None:
+            normalized[field] = "Unavailable"
 
-    return system_info
+    return normalized
