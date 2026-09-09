@@ -105,6 +105,7 @@ Depois que uma Task/Subtask for concluída:
 - aguarde eu informar qual é a próxima Task/Subtask lógica;
 - não comece a próxima implementação até minha confirmação.
 - sugira nomes de commit baseado nas boas práticas do github;
+- informe uma mensagem objetiva para um PR ao final de cada substask;
 
 ## Regra principal
 
