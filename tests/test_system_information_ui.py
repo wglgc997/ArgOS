@@ -8,6 +8,7 @@ import pytest
 from rich.console import Console
 
 from argos.ui.system_information import (
+    format_uptime,
     format_value,
     render_system_information,
 )
@@ -79,3 +80,34 @@ def test_render_unavailable_hardware(value: Any) -> None:
     rendered = stream.getvalue()
     assert "GPU" in rendered
     assert "Unavailable" in rendered
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (0, "0d 00h 00m 00s"),
+        (59, "0d 00h 00m 59s"),
+        (60, "0d 00h 01m 00s"),
+        (3600, "0d 01h 00m 00s"),
+        (86400, "1d 00h 00m 00s"),
+        (90061, "1d 01h 01m 01s"),
+        (None, "Unavailable"),
+        (-1, "Unavailable"),
+        ("90061", "Unavailable"),
+        (True, "Unavailable"),
+        (1.5, "Unavailable"),
+    ],
+)
+def test_format_uptime(value: Any, expected: str) -> None:
+    assert format_uptime(value) == expected
+
+
+def test_render_uptime_in_overview() -> None:
+    stream = StringIO()
+    output = Console(file=stream, width=100, color_system=None)
+
+    render_system_information({"UptimeSeconds": 90061}, output)
+
+    rendered = stream.getvalue()
+    assert "Uptime" in rendered
+    assert "1d 01h 01m 01s" in rendered

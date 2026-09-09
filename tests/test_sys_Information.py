@@ -100,3 +100,12 @@ def test_collect_normalizes_null_hardware_from_powershell() -> None:
 
     assert result["Computer"] == "TEST-PC"
     assert result["BIOS"] == "Unavailable"
+
+@pytest.mark.parametrize("uptime", [0, 90061, None])
+def test_collect_preserves_uptime(uptime: int | None) -> None:
+    runner = Mock(spec=PowerShellRunner)
+    runner.run_json.return_value = {"UptimeSeconds": uptime}
+
+    result = collect_system_information(runner)
+
+    assert result["UptimeSeconds"] == uptime

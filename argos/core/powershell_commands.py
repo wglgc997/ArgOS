@@ -96,11 +96,20 @@ $gpu = Get-CimInstance Win32_VideoController
 $baseboard = Get-CimInstance Win32_BaseBoard
 $timezone = Get-TimeZone
 
+$uptimeSeconds = $null
+if ($null -ne $os.LastBootUpTime) {
+    $elapsed = (Get-Date).ToUniversalTime() - $os.LastBootUpTime.ToUniversalTime()
+    if ($elapsed.TotalSeconds -ge 0) {
+        $uptimeSeconds = [long][math]::Floor($elapsed.TotalSeconds)
+    }
+}
+
 # Build a structured object with required sys info
 
 # Custom object with named fields
 [PSCustomObject]@{
     Computer = $computer.Name
+    UptimeSeconds = $uptimeSeconds
     WindowsVersion = [PSCustomObject]@{
         # Windows product name, such as Windows 11 Enterprise
         Name = $os.Caption

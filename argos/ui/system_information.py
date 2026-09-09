@@ -14,6 +14,17 @@ from rich.text import Text
 from argos.ui.console import console
 
 
+def format_uptime(value: Any) -> str:
+    """Format a non-negative integer duration in seconds."""
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        return "Unavailable"
+
+    days, remainder = divmod(value, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    return f"{days}d {hours:02d}h {minutes:02d}m {seconds:02d}s"
+
 def format_value(value: Any) -> str:
     """Format values without changing the collected data."""
     if value is None or value == "":
@@ -56,11 +67,8 @@ def render_section(title: str, value: Any, output: Console) -> None:
     else:
         status = format_value(value) if value else "Unavailable"
         table.add_row(Text("Status"), Text(status))
-        table.add_row(Text("Status"), Text(format_value(value)
-                                           if value else "Unavailable"))
 
     output.print(Panel(table, title=Text(title), border_style="cyan"))
-
 
 def render_system_information(
         information: dict[str, Any],
@@ -72,6 +80,7 @@ def render_system_information(
         "Current user": information.get("LocalUser"),
         "Architecture": information.get("Architecture"),
         "PowerShell": information.get("PowerShell"),
+        "Uptime": format_uptime(information.get("UptimeSeconds"))
     }
     render_section("Overview", overview, output)
 
