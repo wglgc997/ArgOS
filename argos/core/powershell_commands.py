@@ -95,6 +95,9 @@ $disks = Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"
 $gpu = Get-CimInstance Win32_VideoController
 $baseboard = Get-CimInstance Win32_BaseBoard
 $timezone = Get-TimeZone
+$systemLocale = Get-WinSystemLocale
+$userCulture = Get-Culture
+$uiCulture = Get-UICulture
 
 $uptimeSeconds = $null
 if ($null -ne $os.LastBootUpTime) {
@@ -155,6 +158,16 @@ if ($null -ne $os.LastBootUpTime) {
         StandardName = $timezone.StandardName
     }
     
+    Language = [PSCustomObject]@{
+        SystemLocale = $systemLocale.Name
+        UserCulture = $userCulture.Name
+        UserInterfaceCulture = $uiCulture.Name
+    }
+    Environment = [PSCustomObject]@{
+        DomainOrWorkgroup = $computer.Domain
+        PartOfDomain = $computer.PartOfDomain
+        SystemType = $computer.SystemType
+    }
     Memory = [PSCustomObject]@{
         TotalGB = [math]::Round($computer.TotalPhysicalMemory / 1GB, 2)
         FreeGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)

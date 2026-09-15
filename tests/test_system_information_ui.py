@@ -111,3 +111,38 @@ def test_render_uptime_in_overview() -> None:
     rendered = stream.getvalue()
     assert "Uptime" in rendered
     assert "1d 01h 01m 01s" in rendered
+
+
+def test_render_language_and_environment_information() -> None:
+    stream = StringIO()
+    output = Console(file=stream, width=100, color_system=None)
+
+    render_system_information(
+        {
+            "Language": {
+                "SystemLocale": "pt-BR",
+                "UserCulture": "pt-BR",
+                "UserInterfaceCulture": "en-US",
+            },
+            "Environment": {
+                "DomainOrWorkgroup": "TEST-WORKGROUP",
+                "PartOfDomain": False,
+                "SystemType": "x64-based PC",
+            },
+        },
+        output,
+    )
+
+    rendered = stream.getvalue()
+    assert "Language" in rendered
+    assert "System Locale" in rendered
+    assert "pt-BR" in rendered
+    assert "User Interface Culture" in rendered
+    assert "en-US" in rendered
+    assert "Environment" in rendered
+    assert "Domain Or Workgroup" in rendered
+    assert "TEST-WORKGROUP" in rendered
+    assert "Part Of Domain" in rendered
+    assert "False" in rendered
+    assert "System Type" in rendered
+    assert "x64-based PC" in rendered

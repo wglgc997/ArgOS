@@ -109,3 +109,26 @@ def test_collect_preserves_uptime(uptime: int | None) -> None:
     result = collect_system_information(runner)
 
     assert result["UptimeSeconds"] == uptime
+
+
+def test_collect_preserves_language_and_environment_information() -> None:
+    language = {
+        "SystemLocale": "pt-BR",
+        "UserCulture": "pt-BR",
+        "UserInterfaceCulture": "en-US",
+    }
+    environment = {
+        "DomainOrWorkgroup": "TEST-WORKGROUP",
+        "PartOfDomain": False,
+        "SystemType": "x64-based PC",
+    }
+    runner = Mock(spec=PowerShellRunner)
+    runner.run_json.return_value = {
+        "Language": language,
+        "Environment": environment,
+    }
+
+    result = collect_system_information(runner)
+
+    assert result["Language"] == language
+    assert result["Environment"] == environment

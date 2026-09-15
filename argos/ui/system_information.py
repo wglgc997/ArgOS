@@ -87,6 +87,8 @@ def render_system_information(
     sections = (
         ("WindowsVersion", "Windows"),
         ("Timezone", "Timezone"),
+        ("Language", "Language"),
+        ("Environment", "Environment"),
         ("CPU", "CPU"),
         ("Memory", "Memory"),
         ("Storage", "Storage"),
