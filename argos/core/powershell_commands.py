@@ -87,20 +87,73 @@ GET_BITLOCKER = (
 )
 
 GET_SYSTEM_INFORMATION = """
-$os = Get-CimInstance Win32_OperatingSystem
-$computer = Get-CimInstance Win32_ComputerSystem
-$cpu = Get-CimInstance Win32_Processor
-$bios = Get-CimInstance Win32_BIOS
-$disks = Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"
-$gpu = Get-CimInstance Win32_VideoController
-$baseboard = Get-CimInstance Win32_BaseBoard
-$timezone = Get-TimeZone
-$systemLocale = Get-WinSystemLocale
-$userCulture = Get-Culture
-$uiCulture = Get-UICulture
+$unavailableSources = [System.Collections.Generic.List[string]]::new()
+
+function Invoke-SafeCollection {
+    param(
+        [string]$Source,
+        [scriptblock]$Operation
+    )
+    try {
+        & $Operation
+    }
+    catch {
+        [void]$unavailableSources.Add($Source)
+        return $null
+    }
+}
+$os = Invoke-SafeCollection "Windows" {
+    Get-CimInstance Win32_OperatingSystem -ErrorAction Stop
+}
+$computer = Invoke-SafeCollection "Computer" {
+    Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
+}
+$cpu = Invoke-SafeCollection "CPU" {
+    Get-CimInstance Win32_Processor -ErrorAction Stop
+}
+$bios = Invoke-SafeCollection "BIOS" {
+    Get-CimInstance Win32_BIOS -ErrorAction Stop
+}
+$disks = Invoke-SafeCollection "Storage" {
+    Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" -ErrorAction Stop
+}
+$gpu = Invoke-SafeCollection "GPU" {
+    Get-CimInstance Win32_VideoController -ErrorAction Stop
+}
+$baseboard = Invoke-SafeCollection "Motherboard" {
+    Get-CimInstance Win32_BaseBoard -ErrorAction Stop
+}
+$timezone = Invoke-SafeCollection "Timezone" {
+    Get-TimeZone -ErrorAction Stop
+}
+$systemLocale = Invoke-SafeCollection "System locale" {
+    Get-WinSystemLocale -ErrorAction Stop
+}
+$userCulture = Invoke-SafeCollection "User culture" {
+    Get-Culture -ErrorAction Stop
+}
+$uiCulture = Invoke-SafeCollection "Interface culture" {
+    Get-UICulture -ErrorAction Stop
+}
+
+$totalMemoryGB = $null
+if ($null -ne $computer -and $null -ne $computer.TotalPhysicalMemory) {
+    $totalMemoryGB = [math]::Round(
+        $computer.TotalPhysicalMemory / 1GB,
+        2
+    )
+}
+
+$freeMemoryGB = $null
+if ($null -ne $os -and $null -ne $os.FreePhysicalMemory) {
+    $freeMemoryGB = [math]::Round(
+        $os.FreePhysicalMemory / 1MB,
+        2
+    )
+}
 
 $uptimeSeconds = $null
-if ($null -ne $os.LastBootUpTime) {
+if ($null -ne $os -and $null -ne $os.LastBootUpTime) {
     $elapsed = (Get-Date).ToUniversalTime() - $os.LastBootUpTime.ToUniversalTime()
     if ($elapsed.TotalSeconds -ge 0) {
         $uptimeSeconds = [long][math]::Floor($elapsed.TotalSeconds)
@@ -113,6 +166,7 @@ if ($null -ne $os.LastBootUpTime) {
 [PSCustomObject]@{
     Computer = $computer.Name
     UptimeSeconds = $uptimeSeconds
+    UnavailableSources = @($unavailableSources)
     WindowsVersion = [PSCustomObject]@{
         # Windows product name, such as Windows 11 Enterprise
         Name = $os.Caption
@@ -169,30 +223,48 @@ if ($null -ne $os.LastBootUpTime) {
         SystemType = $computer.SystemType
     }
     Memory = [PSCustomObject]@{
-        TotalGB = [math]::Round($computer.TotalPhysicalMemory / 1GB, 2)
-        FreeGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
+        TotalGB = $totalMemoryGB
+        FreeGB = $freeMemoryGB
     }
     
-    Storage = $disks | ForEach-Object {
-        # Return one storage object per local fixed disk
-        [PSCustomObject]@{
-            Drive = $_.DeviceID
-            FileSystem = $_.FileSystem
-            VolumeName = $_.VolumeName
-            TotalGB = [math]::Round($_.Size / 1GB, 2)
-            FreeGB = [math]::Round($_.FreeSpace / 1GB, 2)
-        }
-    }
+    Storage = $disks |
+        Where-Object { $null -ne $_ } |
+        ForEach-Object {
+            $totalGB = $null
+            if ($null -ne $_.Size) {
+                $totalGB = [math]::Round($_.Size / 1GB, 2)
+            }
 
-    GPU = $gpu | ForEach-Object {
-        # Return one video controller object per detected GPU
-        [PSCustomObject]@{
-            Name = $_.Name
-            DriverVersion = $_.DriverVersion
-            VideoProcessor = $_.VideoProcessor
-            AdapterRAMGB = [math]::Round($_.AdapterRAM / 1GB, 2)
+            $freeGB = $null
+            if ($null -ne $_.FreeSpace) {
+                $freeGB = [math]::Round($_.FreeSpace / 1GB, 2)
+            }
+
+            # Return one storage object per local fixed disk
+            [PSCustomObject]@{
+                Drive = $_.DeviceID
+                FileSystem = $_.FileSystem
+                VolumeName = $_.VolumeName
+                TotalGB = $totalGB
+                FreeGB = $freeGB
+            }
         }
-    }
+
+    GPU = $gpu |
+        Where-Object { $null -ne $_ } |
+        ForEach-Object {
+            $adapterRAMGB = $null
+            if ($null -ne $_.AdapterRAM) {
+                $adapterRAMGB = [math]::Round($_.AdapterRAM / 1GB, 2)
+            }
+
+            [PSCustomObject]@{
+                Name = $_.Name
+                DriverVersion = $_.DriverVersion
+                VideoProcessor = $_.VideoProcessor
+                AdapterRAMGB = $adapterRAMGB
+            }
+        }
 
     BaseBoard = [PSCustomObject]@{
         # Motherboard manufacturer

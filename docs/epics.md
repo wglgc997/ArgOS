@@ -113,12 +113,14 @@ argos/
 - [x] Timezone and PowerShell version
 - [x] Normalization of required hardware fields
 - [x] Calculate and present system uptime
+- [x] Add system language and environment information
+- [x] Render results through Rich panels and tables
+
+
 
 
 ### Remaining work
 
-- [ ] Add system language and environment information
-- [ ] Render results through Rich panels and tables
 - [ ] Add graceful partial-failure handling
 - [ ] Add unit tests with mocked PowerShell results
 - [ ] Connect the collector to the final CLI navigation
@@ -142,7 +144,7 @@ argos/
 
 ### Planned sources
 
-- [ ] System, Application, Security, and Setup
+- [x] System, Application, Security, and Setup
 - [ ] Microsoft Defender
 - [ ] PowerShell
 - [ ] Task Scheduler

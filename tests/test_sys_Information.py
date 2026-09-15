@@ -132,3 +132,22 @@ def test_collect_preserves_language_and_environment_information() -> None:
 
     assert result["Language"] == language
     assert result["Environment"] == environment
+
+
+def test_collect_preserves_available_data_after_partial_failure() -> None:
+    runner = Mock(spec=PowerShellRunner)
+    runner.run_json.return_value = {
+        "Computer": "TEST-PC",
+        "CPU": {"Name": "Test CPU"},
+        "GPU": None,
+        "BIOS": None,
+        "UnavailableSources": ["GPU", "BIOS"],
+    }
+
+    result = collect_system_information(runner)
+
+    assert result["Computer"] == "TEST-PC"
+    assert result["CPU"] == {"Name": "Test CPU"}
+    assert result["GPU"] == "Unavailable"
+    assert result["BIOS"] == "Unavailable"
+    assert result["UnavailableSources"] == ["GPU", "BIOS"]

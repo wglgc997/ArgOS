@@ -25,6 +25,7 @@ def format_uptime(value: Any) -> str:
 
     return f"{days}d {hours:02d}h {minutes:02d}m {seconds:02d}s"
 
+
 def format_value(value: Any) -> str:
     """Format values without changing the collected data."""
     if value is None or value == "":
@@ -44,6 +45,7 @@ def format_value(value: Any) -> str:
         return ", ".join(format_value(item) for item in value) or "Unavailable"
 
     return str(value)
+
 
 def render_section(title: str, value: Any, output: Console) -> None:
     """Render a section, supporting one or multiple devices."""
@@ -70,9 +72,10 @@ def render_section(title: str, value: Any, output: Console) -> None:
 
     output.print(Panel(table, title=Text(title), border_style="cyan"))
 
+
 def render_system_information(
-        information: dict[str, Any],
-        output: Console = console,
+    information: dict[str, Any],
+    output: Console = console,
 ) -> None:
     """Render an inventory using the shared console or a test console."""
     overview = {
@@ -80,10 +83,17 @@ def render_system_information(
         "Current user": information.get("LocalUser"),
         "Architecture": information.get("Architecture"),
         "PowerShell": information.get("PowerShell"),
-        "Uptime": format_uptime(information.get("UptimeSeconds"))
+        "Uptime": format_uptime(information.get("UptimeSeconds")),
     }
-    render_section("Overview", overview, output)
 
+    unavailable_sources = information.get("UnavailableSources")
+    render_section("Overview", overview, output)
+    if unavailable_sources:
+        render_section(
+            "Collection warnings",
+            {"UnavailableSources": unavailable_sources},
+            output,
+        )
     sections = (
         ("WindowsVersion", "Windows"),
         ("Timezone", "Timezone"),

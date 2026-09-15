@@ -146,3 +146,38 @@ def test_render_language_and_environment_information() -> None:
     assert "False" in rendered
     assert "System Type" in rendered
     assert "x64-based PC" in rendered
+
+
+def test_render_partial_collection_warning() -> None:
+    stream = StringIO()
+    output = Console(file=stream, width=100, color_system=None)
+
+    render_system_information(
+        {
+            "Computer": "TEST-PC",
+            "CPU": {"Name": "Test CPU"},
+            "GPU": "Unavailable",
+            "UnavailableSources": ["GPU", "BIOS"],
+        },
+        output,
+    )
+
+    rendered = stream.getvalue()
+    assert "TEST-PC" in rendered
+    assert "Test CPU" in rendered
+    assert "Collection warnings" in rendered
+    assert "Unavailable Sources" in rendered
+    assert "GPU, BIOS" in rendered
+    assert rendered.count("Overview") == 1
+
+
+def test_render_omits_warning_when_all_sources_are_available() -> None:
+    stream = StringIO()
+    output = Console(file=stream, width=100, color_system=None)
+
+    render_system_information(
+        {"UnavailableSources": []},
+        output,
+    )
+
+    assert "Collection warnings" not in stream.getvalue()
