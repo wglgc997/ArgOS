@@ -99,7 +99,7 @@ argos/
 
 ## EP-02 — System Information
 
-**Status:** 🟡 In progress — current milestone  
+**Status:** 🟢 Implemented 
 **Objective:** Provide a consolidated, structured view of the local Windows environment.
 
 ### Implemented collection
@@ -115,15 +115,17 @@ argos/
 - [x] Calculate and present system uptime
 - [x] Add system language and environment information
 - [x] Render results through Rich panels and tables
+- [x] Add graceful partial-failure handling
+- [x] Add unit tests with mocked PowerShell results
+- [x] Connect the collector to the final CLI navigation
+
+
 
 
 
 
 ### Remaining work
 
-- [ ] Add graceful partial-failure handling
-- [ ] Add unit tests with mocked PowerShell results
-- [ ] Connect the collector to the final CLI navigation
 
 **Technical direction:** Use CIM/PowerShell and Python system APIs through `PowerShellRunner`; avoid scattered or duplicated subprocess calls.
 
