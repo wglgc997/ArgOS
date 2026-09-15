@@ -1,4 +1,8 @@
-"""Command-line entry point for ArgOS."""
+"""
+This is the application orchestration layer.
+
+Command-line entry point for ArgOS.
+"""
 
 from __future__ import annotations
 
