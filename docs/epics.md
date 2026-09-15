@@ -9,19 +9,19 @@ ArgOS is evolving from the original **Windows-Log-Script** prototype into a modu
 
 ## Progress at a glance
 
-| Epic | Area |     Status     | Target outcome |
-| :--- | :--- |:--------------:| :--- |
-| [EP-01](#ep-01--foundation) | Foundation | 🟢 Implemented | Stable application architecture |
-| [EP-02](#ep-02--system-information) | System information | 🟡 In progress | Consolidated Windows inventory |
-| [EP-03](#ep-03--windows-event-logs) | Windows Event Logs |  🟠 Prototype  | Searchable, exportable event analysis |
-| [EP-04](#ep-04--processes-and-services) | Processes and services |   ⚪ Planned   | Local workload inspection and control |
-| [EP-05](#ep-05--network-diagnostics) | Network diagnostics |   ⚪ Planned   | Network troubleshooting workspace |
-| [EP-06](#ep-06--security-audit) | Security audit |   ⚪ Planned   | Local security posture findings |
-| [EP-07](#ep-07--hardware-and-firmware) | Hardware and firmware |   ⚪ Planned   | Detailed device inventory |
-| [EP-08](#ep-08--utilities) | Utilities |   ⚪ Planned   | Hash, integrity, and password tools |
-| [EP-09](#ep-09--reports) | Reports |   ⚪ Planned   | Reusable investigation reports |
-| [EP-10](#ep-10--quality-packaging-and-release) | Quality and release |   ⚪ Planned   | Tested, installable releases |
-| [EP-11](#ep-11--interactive-cli-experience) | CLI experience |   ⚪ Future    | Polished interactive workflows |
+| Epic | Area |     Status      | Target outcome |
+| :--- | :--- |:---------------:| :--- |
+| [EP-01](#ep-01--foundation) | Foundation | 🟢 Implemented  | Stable application architecture |
+| [EP-02](#ep-02--system-information) | System information | 🟢 Implemented  | Consolidated Windows inventory |
+| [EP-03](#ep-03--windows-event-logs) | Windows Event Logs |  🟠 Prototype   | Searchable, exportable event analysis |
+| [EP-04](#ep-04--processes-and-services) | Processes and services |   ⚪ Planned    | Local workload inspection and control |
+| [EP-05](#ep-05--network-diagnostics) | Network diagnostics |   ⚪ Planned    | Network troubleshooting workspace |
+| [EP-06](#ep-06--security-audit) | Security audit |   ⚪ Planned    | Local security posture findings |
+| [EP-07](#ep-07--hardware-and-firmware) | Hardware and firmware |   ⚪ Planned    | Detailed device inventory |
+| [EP-08](#ep-08--utilities) | Utilities |   ⚪ Planned    | Hash, integrity, and password tools |
+| [EP-09](#ep-09--reports) | Reports |   ⚪ Planned    | Reusable investigation reports |
+| [EP-10](#ep-10--quality-packaging-and-release) | Quality and release |   ⚪ Planned    | Tested, installable releases |
+| [EP-11](#ep-11--interactive-cli-experience) | CLI experience |    ⚪ Future    | Polished interactive workflows |
 
 ### Status legend
 
@@ -118,20 +118,6 @@ argos/
 - [x] Add graceful partial-failure handling
 - [x] Add unit tests with mocked PowerShell results
 - [x] Connect the collector to the final CLI navigation
-
-
-
-
-
-
-### Remaining work
-
-
-**Technical direction:** Use CIM/PowerShell and Python system APIs through `PowerShellRunner`; avoid scattered or duplicated subprocess calls.
-
-**Exit criteria:** Users can open the system-information module from the CLI and receive a readable, tested overview even when individual data sources are unavailable.
-
----
 
 ## EP-03 — Windows Event Logs
 
