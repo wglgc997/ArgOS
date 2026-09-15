@@ -29,6 +29,16 @@ STRUCTURED_FIELDS = {
         "InstallDate",
         "LastBootUpTime",
     ),
+    "Language": (
+        "SystemLocale",
+        "UserCulture",
+        "UserInterfaceCulture",
+    ),
+    "Environment": (
+        "DomainOrWorkgroup",
+        "PartOfDomain",
+        "SystemType",
+    ),
     "CPU": (
         "Name",
         "Manufacturer",
@@ -220,12 +230,9 @@ def normalize_collection(
 def normalize_hardware_information(
     system_info: dict[str, Any],
 ) -> dict[str, Any]:
-    """Return a copy with missing or null hardware fields normalized."""
-    normalized = system_info.copy()
+    """Return system information using a stable data structure."""
+    normalized = deepcopy(system_info)
 
-    for field in REQUIRED_HARDWARE_FIELDS:
-        if normalized.get(field) is None:
-            normalized[field] = "Unavailable"
     """
     Return system information using a stable data structure.
 
@@ -236,8 +243,6 @@ def normalize_hardware_information(
     Returns:
         A normalized copy of the collected system information.
     """
-
-    normalized = deepcopy(system_info)
 
     for field in SCALAR_FIELDS:
         normalized[field] = value_or_unavailable(normalized.get(field))
