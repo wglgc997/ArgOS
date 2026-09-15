@@ -1,5 +1,6 @@
 """Tests for system-information collection and normalization."""
 
+from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import Mock
 
@@ -12,6 +13,7 @@ from argos.modules.sys_information import (
     SCALAR_FIELDS,
     STRUCTURED_FIELDS,
     UNAVAILABLE,
+    calculate_uptime,
     collect_system_information,
     normalize_hardware_information,
     unavailable_uptime,
@@ -201,3 +203,21 @@ def test_collect_preserves_available_data_after_partial_failure() -> None:
         field: UNAVAILABLE for field in STRUCTURED_FIELDS["BIOS"]
     }
     assert result["UnavailableSources"] == ["GPU", "BIOS"]
+
+
+def test_calculate_uptime_from_normalized_timestamp() -> None:
+    current_time = datetime(2026, 1, 2, 1, 1, 1, tzinfo=UTC)
+
+    result = calculate_uptime(
+        "2026-01-01T00:00:00Z",
+        current_time=current_time,
+    )
+
+    assert result == {
+        "TotalSeconds": 90_061,
+        "Days": 1,
+        "Hours": 1,
+        "Minutes": 1,
+        "Seconds": 1,
+        "Display": "1d 01h 01m 01s",
+    }
