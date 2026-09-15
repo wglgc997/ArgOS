@@ -91,11 +91,21 @@ def test_collect_rejects_non_dictionary_output() -> None:
     ):
         collect_system_information(runner)
 
-@pytest.mark.parametrize("field", REQUIRED_HARDWARE_FIELDS)
-def test_normalize_replaces_null_hardware_fields(field: str) -> None:
+@pytest.mark.parametrize("field", STRUCTURED_FIELDS)
+def test_normalize_replaces_null_structured_fields(field: str) -> None:
     result = normalize_hardware_information({field: None})
 
-    assert result[field] == "Unavailable"
+    assert result[field] == {
+        expected_field: UNAVAILABLE
+        for expected_field in STRUCTURED_FIELDS[field]
+    }
+
+
+@pytest.mark.parametrize("field", COLLECTION_FIELDS)
+def test_normalize_replaces_null_collection_fields(field: str) -> None:
+    result = normalize_hardware_information({field: None})
+
+    assert result[field] == []
 
 
 def test_normalize_does_not_modify_input() -> None:
@@ -105,8 +115,9 @@ def test_normalize_does_not_modify_input() -> None:
 
     assert source == {"Computer": "TEST-PC", "CPU": None}
     assert result is not source
-    assert result["CPU"] == "Unavailable"
-
+    assert result["CPU"] == {
+        field: UNAVAILABLE for field in STRUCTURED_FIELDS["CPU"]
+    }
 
 def test_normalize_preserves_empty_collections_and_zero() -> None:
     source: dict[str, Any] = {
@@ -119,8 +130,10 @@ def test_normalize_preserves_empty_collections_and_zero() -> None:
 
     assert result["Storage"] == []
     assert result["GPU"] == []
-    assert result["Memory"] == {"FreeGB": 0}
-
+    assert result["Memory"] == {
+        "TotalGB": UNAVAILABLE,
+        "FreeGB": 0,
+    }
 
 def test_collect_normalizes_null_hardware_from_powershell() -> None:
     runner = Mock(spec=PowerShellRunner)
@@ -129,7 +142,9 @@ def test_collect_normalizes_null_hardware_from_powershell() -> None:
     result = collect_system_information(runner)
 
     assert result["Computer"] == "TEST-PC"
-    assert result["BIOS"] == "Unavailable"
+    assert result["BIOS"] == {
+        field: UNAVAILABLE for field in STRUCTURED_FIELDS["BIOS"]
+    }
 
 @pytest.mark.parametrize("uptime", [0, 90061, None])
 def test_collect_preserves_uptime(uptime: int | None) -> None:
@@ -177,7 +192,12 @@ def test_collect_preserves_available_data_after_partial_failure() -> None:
     result = collect_system_information(runner)
 
     assert result["Computer"] == "TEST-PC"
-    assert result["CPU"] == {"Name": "Test CPU"}
-    assert result["GPU"] == "Unavailable"
-    assert result["BIOS"] == "Unavailable"
+    assert result["CPU"] == {
+        field: "Test CPU" if field == "Name" else UNAVAILABLE
+        for field in STRUCTURED_FIELDS["CPU"]
+    }
+    assert result["GPU"] == []
+    assert result["BIOS"] == {
+        field: UNAVAILABLE for field in STRUCTURED_FIELDS["BIOS"]
+    }
     assert result["UnavailableSources"] == ["GPU", "BIOS"]
