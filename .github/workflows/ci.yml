@@ -31,7 +31,9 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+        strategy:
+          matrix:
+            python-version: ["3.11", "3.1"]
           cache: pip
           cache-dependency-path: pyproject.toml
 
@@ -52,3 +54,4 @@ jobs:
           python -m pytest
           --cov=argos
           --cov-report=term-missing
+          --cov-fail-under=70

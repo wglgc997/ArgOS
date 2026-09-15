@@ -29,6 +29,7 @@ from argos.ui import (
     read_menu_choice,
     wait_for_user,
 )
+from argos.ui.system_information import render_system_information
 
 logger = logging.getLogger("argos.app")
 
@@ -54,8 +55,7 @@ def display_system_information() -> None:
     print_info("Collecting system information...")
 
     information = collect_system_information()
-    console.print_json(data=information)
-
+    render_system_information(information)
 
 def run_menu(
     read_choice: Callable[[], str] = read_menu_choice,

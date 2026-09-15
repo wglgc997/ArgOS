@@ -220,6 +220,12 @@ def normalize_collection(
 def normalize_hardware_information(
     system_info: dict[str, Any],
 ) -> dict[str, Any]:
+    """Return a copy with missing or null hardware fields normalized."""
+    normalized = system_info.copy()
+
+    for field in REQUIRED_HARDWARE_FIELDS:
+        if normalized.get(field) is None:
+            normalized[field] = "Unavailable"
     """
     Return system information using a stable data structure.
 
