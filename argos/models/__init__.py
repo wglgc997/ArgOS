@@ -1,5 +1,7 @@
 """Shared ArgOS domain models."""
 
+from argos.models.event_record import EventRecord, EventSeverity
 from argos.models.finding import Finding, Severity
 
-__all__ = ["Finding", "Severity"]
+__all__ = ["Finding", "Severity", "EventRecord", "EventSeverity"]
+
