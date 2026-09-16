@@ -121,18 +121,15 @@ argos/
 
 ## EP-03 — Windows Event Logs
 
-**Status:** 🟠 Prototype exists; architectural refactor pending  
-**Objective:** Rebuild and expand the event-log functionality that originated the project.
-
-### Prototype evidence
-
-- [x] Read the Windows System event log
-- [x] Export collected events to a text file
-- [x] Process collections exceeding 50,000 System events
+**Status:** ⚪ Planned
+**Objective:** Build searchable and exportable Windows event-log analysis.
 
 ### Planned sources
 
-- [x] System, Application, Security, and Setup
+- [ ] System
+- [ ] Application
+- [ ] Security
+- [ ] Setup
 - [ ] Microsoft Defender
 - [ ] PowerShell
 - [ ] Task Scheduler
