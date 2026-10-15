@@ -1,10 +1,10 @@
 """Windows event-log sources and query configuration."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class EventLogSource(str, Enum):
+class EventLogSource(StrEnum):
     SYSTEM = "System"
     APPLICATION = "Application"
     SECURITY = "Security"
