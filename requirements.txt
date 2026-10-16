@@ -3,7 +3,7 @@ rich
 typer
 questionary
 psutil
-pywin32
+
 jinja2
 
 
