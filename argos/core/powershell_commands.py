@@ -295,3 +295,25 @@ if ($null -ne $os -and $null -ne $os.LastBootUpTime) {
     PowerShell = $PSVersionTable.PSVersion.ToString()
 }
 """
+
+
+def build_event_logs_command(log_name: str, max_events: int) -> str:
+    """Build a bounded Windows event-log query."""
+    if not log_name.strip():
+        raise ValueError("log_name must not be blank.")
+
+    if (
+        isinstance(max_events, bool)
+        or not isinstance(max_events, int)
+        or max_events <= 0
+    ):
+        raise ValueError("max_events must be a positive integer.")
+
+    escaped_log_name = log_name.replace("'", "''")
+
+    return (
+        f"Get-WinEvent -LogName '{escaped_log_name}' "
+        f"-MaxEvents {max_events} -ErrorAction Stop | "
+        "Select-Object LogName, Id, RecordId, TimeCreated, "
+        "Level, ProviderName, Message, MachineName"
+    )

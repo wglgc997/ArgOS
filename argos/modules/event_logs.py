@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+from argos.core.powershell_commands import build_event_logs_command
+
 
 class EventLogSource(StrEnum):
     SYSTEM = "System"
@@ -29,3 +31,10 @@ class EventLogQuery:
             or self.max_events <= 0
         ):
             raise ValueError("max_events must be a positive integer.")
+
+def build_event_query_command(query: EventLogQuery) -> str:
+    """Translate a validated event query into a PS command."""
+    return build_event_logs_command(
+        log_name=query.source.value,
+        max_events=query.max_events,
+    )
