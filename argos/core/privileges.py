@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import ctypes
-import os
+import sys
 
 
 def is_administrator() -> bool:
     """Return whether ArgOS is running with administrator privileges."""
 
-    if os.name != "nt":
+    if sys.platform != "win32":
         return False
 
     try:
