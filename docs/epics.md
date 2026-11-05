@@ -338,23 +338,27 @@ Reports will share the CLI's severity semantics and must clearly record collecti
 
 ## Current milestone
 
-### EP-02 — Complete the system-information vertical slice
+### EP-03 — Complete the Windows Event Logs vertical slice
 
-The next milestone is to take the existing structured collector through the full application path:
+The current milestone is to take the bounded event query through the full
+application path:
 
 ```text
-PowerShell/CIM → PowerShellRunner → Normalized Python data → Rich UI → Tests
+Get-WinEvent → PowerShellRunner → EventRecord → Rich UI → Export
 ```
 
-Completing this slice will establish the implementation pattern reused by Network, Security, Hardware, and Event Log modules.
+The source catalog, bounded PowerShell query, and normalized event model are
+available. The next work connects collection and normalization before adding
+interactive filters, presentation, and export.
 
 ### Suggested completion sequence
 
-1. Correct and test system-information normalization.
-2. Add a Rich presentation layer for collected data.
-3. Connect the module to the application entry point.
-4. Add privilege and partial-failure messaging.
-5. Establish automated linting and tests before expanding collection modules.
+1. Consolidate the event domain model around `EventRecord`.
+2. Execute bounded queries and normalize PowerShell results.
+3. Add filters for event ID, severity, source, date, and message.
+4. Render normalized records through Rich tables.
+5. Export the same records to TXT, JSON, and CSV.
+6. Connect the workflow to the application navigation and test partial failures.
 
 ---
 

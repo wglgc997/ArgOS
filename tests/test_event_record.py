@@ -1,5 +1,6 @@
 """Tests for the normalized Windows Event Log model."""
 
+from dataclasses import FrozenInstanceError
 from datetime import UTC, datetime
 
 import pytest
@@ -75,3 +76,10 @@ def test_allows_missing_record_id_and_empty_message() -> None:
 
     assert event.record_id is None
     assert event.message == ""
+
+
+def test_event_record_cannot_be_modified() -> None:
+    event = make_event()
+
+    with pytest.raises(FrozenInstanceError):
+        event.message = "Changed"  # type: ignore[misc]
